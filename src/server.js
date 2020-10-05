@@ -1,13 +1,20 @@
-require('dotenv').config();
-
+const config = require('./config');
 const express = require('express');
-const app = express();
-const port = process.env.PORT || 8000;
+const loaders = require('./loaders');
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-});
+async function start() {
+  const app = express();
 
-app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}`)
-});
+  await loaders({ expressApp: app });
+
+  app.listen(config.port, (err) => {
+    if(err) {
+      console.error(err);
+      process.exit(1);
+    }
+
+    console.log(`Listening at http://localhost:${config.port}`)
+  });
+}
+
+start();

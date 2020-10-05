@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/server.js",
-    "watch": "nodemon src/server.js"
+    "watch": "nodemon --watch src --watch .env src/server.js"
   },
   "repository": {
     "type": "git",
@@ -19,8 +19,17 @@
   },
   "homepage": "https://github.com/Canciller/neighborhood-api#readme",
   "dependencies": {
+    "bcrypt": "^5.0.0",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-jwt": "^6.0.0",
+    "http-errors": "^1.8.0",
+    "jsonwebtoken": "^8.5.1",
+    "method-override": "^3.0.0",
+    "mongoose": "^5.10.7",
+    "morgan": "^1.10.0",
     "nodemon": "^2.0.4"
   }
 }

@@ -1,24 +1,13 @@
-// Require the framework and instantiate it
-const fastify = require('fastify')({ logger: true });
+require('dotenv').config();
 
-fastify.register(require('fastify-favicon'));
+const express = require('express');
+const app = express();
+const port = process.env.PORT || 8000;
 
-fastify.register(require('fastify-cors'));
-
-// Declare a route
-fastify.get('/', async (request, reply) => {
-  return { hello: 'world' }
+app.get('/', (req, res) => {
+  res.send('Hello World!')
 });
 
-// Run the server!
-const start = async () => {
-  try {
-    await fastify.listen(3000)
-    fastify.log.info(`server listening on ${fastify.server.address().port}`)
-  } catch (err) {
-    fastify.log.error(err)
-    process.exit(1)
-  }
-}
-
-start();
+app.listen(port, () => {
+  console.log(`Listening at http://localhost:${port}`)
+});

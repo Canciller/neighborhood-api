@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "watch": "nodemon src/server.js"
   },
   "repository": {
     "type": "git",
@@ -18,6 +19,9 @@
   },
   "homepage": "https://github.com/Canciller/neighborhood-api#readme",
   "dependencies": {
-    "fastify": "^3.5.1"
+    "fastify": "^3.5.1",
+    "fastify-cors": "^4.1.0",
+    "fastify-favicon": "^3.0.0",
+    "nodemon": "^2.0.4"
   }
 }

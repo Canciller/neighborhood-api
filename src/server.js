@@ -1,10 +1,14 @@
 // Require the framework and instantiate it
-const fastify = require('fastify')({ logger: true })
+const fastify = require('fastify')({ logger: true });
+
+fastify.register(require('fastify-favicon'));
+
+fastify.register(require('fastify-cors'));
 
 // Declare a route
 fastify.get('/', async (request, reply) => {
   return { hello: 'world' }
-})
+});
 
 // Run the server!
 const start = async () => {
@@ -16,4 +20,5 @@ const start = async () => {
     process.exit(1)
   }
 }
-start()
+
+start();

@@ -1,6 +1,5 @@
 const isAuth = require('./isAuth');
 const UserService = require('../../services/user');
-const config = require('../../config');
 const createError = require('http-errors');
 
 module.exports = (resource) => {
@@ -8,22 +7,22 @@ module.exports = (resource) => {
     isAuth,
     async (req, res, next) => {
       try {
-        const permissions = await UserService.getPermissions(req.auth.username, resource);
-        if(!permissions) throw createError(401);
+        const permission = await UserService.getPermission(req.auth.username, resource);
+        if(!permission) throw createError(401);
 
         var allow = false;
         switch(req.method) {
           case 'POST':
-            allow = permissions.create;
+            allow = permission.create;
             break;
           case 'GET':
-            allow = permissions.read;
+            allow = permission.read;
             break;
           case 'PUT':
-            allow = permissions.update;
+            allow = permission.update;
             break;
           case 'DELETE':
-            allow = permissions.delete;
+            allow = permission.delete;
             break;
           default:
             break;

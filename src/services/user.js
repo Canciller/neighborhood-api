@@ -33,15 +33,15 @@ class UserService {
     return await User.list(query);
   }
 
-  async getPermissions(username, resource)
+  async getPermission(username, resource)
   {
     var user = await this.get(username);
     if(!user) return null;
 
-    var permissions = await Permission.findOne({ role: user.role, resource: resource });
-    if(!permissions) return null;
+    var permission = await Permission.findOne({ role: user.role, resource: resource });
+    if(!permission) return null;
 
-    return permissions;
+    return permission;
   }
 }
 

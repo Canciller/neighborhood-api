@@ -33,6 +33,10 @@ class UserService {
     return await User.list(query);
   }
 
+  async exists(username) {
+    return await User.exists({ username: username });
+  }
+
   async getPermission(username, resource)
   {
     var user = await this.get(username);

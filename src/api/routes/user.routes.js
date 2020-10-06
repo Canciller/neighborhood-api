@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const UserService = require('../../services/user');
+const UserService = require('../../services/user.service');
 const isAllow = require('../middlewares/isAllow');
 const createError = require('http-errors');
 

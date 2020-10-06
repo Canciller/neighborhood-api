@@ -1,4 +1,4 @@
-const UserService = require('./user');
+const UserService = require('./user.service');
 const RefreshToken = require('../models/refreshToken');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');

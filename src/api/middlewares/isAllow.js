@@ -1,5 +1,5 @@
 const isAuth = require('./isAuth');
-const UserService = require('../../services/user');
+const UserService = require('../../services/user.service');
 const createError = require('http-errors');
 
 module.exports = (resource) => {

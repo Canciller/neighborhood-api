@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const router = Router();
-const AuthService = require('../../services/auth');
+const AuthService = require('../../services/auth.service');
 const createError = require('http-errors');
 const isAuth = require('../middlewares/isAuth');
 

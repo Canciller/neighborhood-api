@@ -40,7 +40,6 @@ module.exports = ({ app }) => {
   });
 
   app.use((err, req, res, next) => {
-    //console.error(err);
     Logger.error(err);
 
     res.status(err.status || 500);

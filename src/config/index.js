@@ -18,5 +18,13 @@ module.exports = {
   api: {
     prefix: '/api'
   },
-  saltRounds: process.env.SALT_ROUNDS || 10
+  saltRounds: process.env.SALT_ROUNDS || 10,
+  mailer: {
+    service: process.env.MAILER_SERVICE,
+    auth: {
+      user: process.env.MAILER_USER,
+      pass: process.env.MAILER_PASS
+    }
+  },
+  appName: process.env.APP_NAME
 }

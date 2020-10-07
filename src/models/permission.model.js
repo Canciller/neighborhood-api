@@ -4,16 +4,14 @@ const PermissionSchema = new mongoose.Schema({
     resource: {
       type: String,
       required: true,
-      unique: true,
+      lowercase: true
     },
     role: {
       type: String,
-      ref: 'Role.name',
-      unique: true
+      required: true,
+      lowercase: true
     },
-    description: {
-        type: String
-    },
+    description: String,
     read: {
       type: Boolean,
       default: false
@@ -31,5 +29,10 @@ const PermissionSchema = new mongoose.Schema({
       default: false
     },
 });
+
+PermissionSchema.index({
+  resource: 1,
+  role: 1
+}, { unique: true });
 
 module.exports = mongoose.model('Permission', PermissionSchema);

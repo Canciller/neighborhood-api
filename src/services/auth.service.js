@@ -1,18 +1,15 @@
 const UserService = require('./user.service');
-const RefreshToken = require('../models/refreshToken');
+const MailerService = require('./mailer.service');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
-const user = require('../models/user');
+
+//const RefreshToken = require('../models/refreshToken.model');
+const EmailVerification = require('../models/emailVerification.model');
+const { base } = require('../models/emailVerification.model');
 
 class AuthService {
-  generateJwtToken(payload)
-  {
-    return jwt.sign(payload, config.jwtSecret, {
-      //expiresIn: '15m'
-    });
-  }
-
+  /*
   generateRefreshToken(userId, ipAddress)
   {
     const token = crypto.randomBytes(40).toString('hex');
@@ -69,11 +66,23 @@ class AuthService {
       ...payload
     }
   }
+  */
+
+  generateJwtToken(payload)
+  {
+    return jwt.sign(payload, config.jwtSecret, {
+      //expiresIn: '15m'
+    });
+  }
+
+  generateEmailVerificationCode() {
+    return crypto.randomBytes(64).toString('hex');
+  }
 
   async signIn({
     username,
     password,
-    ipAddress,
+    //ipAddress,
   }) {
     const user = await UserService.get(username);
     if(!user) return null;
@@ -108,14 +117,48 @@ class AuthService {
       password
     });
 
-    await this.sendEmailVerification(username);
-
     return created;
   }
 
-  async sendEmailVerification(username)
+  async verify(code)
   {
+    const emailVerification = await EmailVerification.findOneAndDelete({ code });
 
+    if(!emailVerification) return false
+
+    const user = await UserService.verifyById(emailVerification.user);
+    if(!user) return false;
+
+    return true;
+  }
+
+  async sendEmailVerification({
+    baseUrl,
+    userId
+  })
+  {
+    const emailVerification = await EmailVerification.findOneAndUpdate(
+      {
+        user: userId
+      },
+      {
+        code: this.generateEmailVerificationCode()
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true })
+      .populate('user');
+
+    if(!emailVerification) return null;
+
+    const verificationUrl = `${baseUrl}/${emailVerification.code}`;
+
+    await MailerService.sendMail({
+      to: emailVerification.user.email,
+      html: `
+        <a target="_blank" href="${verificationUrl}">${verificationUrl}</a>
+      `
+    });
+
+    return emailVerification;
   }
 }
 

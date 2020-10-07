@@ -27,7 +27,4 @@ module.exports = {
     }
   },
   appName: process.env.APP_NAME,
-  logs: {
-    level: process.env.LOG_LEVEL || 'silly',
-  },
 }

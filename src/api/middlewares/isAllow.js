@@ -7,7 +7,7 @@ module.exports = (resource) => {
     isAuth,
     async (req, res, next) => {
       try {
-        const permission = await UserService.getPermission(req.auth.username, resource);
+        const permission = await UserService.getPermissionById(req.auth.id, resource);
         if(!permission) throw createError(401);
 
         var allow = false;

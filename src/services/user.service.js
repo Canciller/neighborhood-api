@@ -66,6 +66,17 @@ class UserService {
 
     return permission;
   }
+
+  async getPermissionById(id, resource)
+  {
+    var user = await this.getById(id);
+    if(!user) return null;
+
+    var permission = await Permission.findOne({ role: user.role, resource: resource });
+    if(!permission) return null;
+
+    return permission;
+  }
 }
 
 module.exports = new UserService;

@@ -2,6 +2,7 @@ const { Router } = require('express');
 const router = Router();
 const Logger = require('../../loaders/logger');
 const AuthService = require('../../services/auth.service');
+const UserService = require('../../services/user.service');
 const createError = require('http-errors');
 const isAuth = require('../middlewares/isAuth');
 const config = require('../../config');
@@ -27,7 +28,16 @@ module.exports = (app) => {
     '/myself',
     isAuth,
     async(req, res, next) => {
-      res.json(req.auth);
+      try {
+        const myself = await UserService.getById(req.auth.id);
+
+        if(!myself)
+          throw createError(404);
+        else
+          res.json(myself);
+      } catch(err) {
+        next(err);
+      }
     }
   )
 

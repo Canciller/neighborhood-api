@@ -22,7 +22,6 @@ module.exports = ({ app }) => {
   app.use(expressWinston.logger({
     meta: false,
     expressFormat: true,
-    colorize: true,
     winstonInstance: Logger
   }));
 

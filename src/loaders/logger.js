@@ -9,7 +9,9 @@ const LoggerInstance = winston.createLogger({
     }),
     winston.format.errors({ stack: true }),
     winston.format.splat(),
-    winston.format.colorize(),
+    process.env.NODE_ENV === 'development' ?
+      winston.format.colorize() :
+      winston.format.uncolorize(),
     winston.format.simple(),
     winston.format.printf(({
       timestamp,
@@ -18,7 +20,7 @@ const LoggerInstance = winston.createLogger({
       meta,
       stack
     }) => {
-      return `${timestamp} ${level}: ${stack || message} ${meta? JSON.stringify(meta) : ''}`;
+      return `${timestamp} ${level}: ${stack ? stack : message} ${meta ? JSON.stringify(meta) : ''}`;
     })
   ),
   transports: [

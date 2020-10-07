@@ -3,8 +3,10 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const methodOverride = require('method-override');
 const createError = require('http-errors');
+const expressWinston = require('express-winston')
 const config = require('../config');
 const routes = require('../api');
+const Logger = require('./logger');
 
 module.exports = ({ app }) => {
   app.get('/status', (req, res) => {
@@ -16,6 +18,13 @@ module.exports = ({ app }) => {
   });
 
   app.enable('trust proxy');
+
+  app.use(expressWinston.logger({
+    meta: false,
+    expressFormat: true,
+    colorize: true,
+    winstonInstance: Logger
+  }));
 
   app.use(cors());
 
@@ -31,7 +40,8 @@ module.exports = ({ app }) => {
   });
 
   app.use((err, req, res, next) => {
-    console.error(err);
+    //console.error(err);
+    Logger.error(err);
 
     res.status(err.status || 500);
     res.json({

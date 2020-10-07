@@ -1,5 +1,6 @@
 const config = require('./config');
 const express = require('express');
+const Logger = require('./loaders/logger');
 const loaders = require('./loaders');
 
 async function start() {
@@ -13,7 +14,7 @@ async function start() {
       process.exit(1);
     }
 
-    console.log(`Listening at http://localhost:${config.port}`)
+    Logger.info(`Listening at http://localhost:${config.port}`);
   });
 }
 

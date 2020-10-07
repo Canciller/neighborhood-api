@@ -26,5 +26,8 @@ module.exports = {
       pass: process.env.MAILER_PASS
     }
   },
-  appName: process.env.APP_NAME
+  appName: process.env.APP_NAME,
+  logs: {
+    level: process.env.LOG_LEVEL || 'silly',
+  },
 }

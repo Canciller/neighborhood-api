@@ -13,7 +13,7 @@ module.exports = (resource) => {
         var allow = false;
         switch(req.method) {
           case 'POST':
-            allow = permission.create;
+            allow = permission.write;
             break;
           case 'GET':
             allow = permission.read;

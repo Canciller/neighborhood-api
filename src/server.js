@@ -10,7 +10,7 @@ async function start() {
 
   app.listen(config.port, (err) => {
     if(err) {
-      console.error(err);
+      Logger.error(err);
       process.exit(1);
     }
 

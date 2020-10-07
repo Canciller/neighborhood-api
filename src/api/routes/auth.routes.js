@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const router = Router();
+const Logger = require('../../loaders/logger');
 const AuthService = require('../../services/auth.service');
 const createError = require('http-errors');
 const isAuth = require('../middlewares/isAuth');
@@ -63,7 +64,7 @@ module.exports = (app) => {
         try {
           await sendEmailVerification(getBaseUrl(req), newUser.id);
         } catch(err) {
-          console.error(err);
+          Logger.error(err);
         }
       } catch(err) {
         next(err);

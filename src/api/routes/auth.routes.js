@@ -89,11 +89,12 @@ module.exports = (app) => {
       `
       try {
         const verified = await AuthService.verify(req.params.code);
-        if(!verified) throw createError(403, 'Enlace de verificación de cuenta agotado');
+        if(!verified) return res.status(403).send('Enlace de verificación de cuenta agotado.');
 
-        res.send(template.replace('%message%', 'Tu cuenta ha sido verificada'));
+        res.send(template.replace('%message%', 'Tu cuenta ha sido verificada.'));
       } catch(err) {
-        res.send(template.replace('%message%', err.message));
+        Logger.error(err);
+        res.status(500).send(template.replace('%message%', 'Ha habido un problema intentalo de nuevo mas tarde.'));
       }
     }
   );

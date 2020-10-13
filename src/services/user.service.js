@@ -44,7 +44,7 @@ class UserService {
   }
 
   async delete(username) {
-    return await User.findOneAndRemove({ username: username });
+    return await User.findOneAndRemove({ username });
   }
 
   async list(query) {
@@ -52,7 +52,15 @@ class UserService {
   }
 
   async exists(username) {
-    return await User.exists({ username: username });
+    return await User.exists({ username });
+  }
+
+  async existsById(id) {
+    return await User.exists({ _id: id });
+  }
+
+  async emailExists(email) {
+    return await User.exists({ email });
   }
 }
 

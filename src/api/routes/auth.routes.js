@@ -5,20 +5,10 @@ const AuthService = require('../../services/auth.service');
 const UserService = require('../../services/user.service');
 const createError = require('http-errors');
 const isAuth = require('../middlewares/isAuth');
-const config = require('../../config');
 
-async function sendEmailVerification(baseUrl, userId)
+async function sendEmailVerification(userId)
 {
-  return await AuthService.sendEmailVerification({
-    baseUrl: `${baseUrl}/verify`,
-    userId
-  });
-}
-
-function getBaseUrl(req)
-{
-  const origin = req.get('origin') || req.get('host');
-  return `${req.protocol}://${origin}${config.api.prefix}/auth`;
+  return await AuthService.sendEmailVerification(userId, '/auth/verify');
 }
 
 module.exports = (app) => {
@@ -72,7 +62,7 @@ module.exports = (app) => {
           res.json(newUser);
 
         try {
-          await sendEmailVerification(getBaseUrl(req), newUser.id);
+          await sendEmailVerification(newUser.id);
         } catch(err) {
           Logger.error(err);
         }
@@ -113,35 +103,14 @@ module.exports = (app) => {
    * Send email verification
    */
   router.get(
-    '/verify',
+    '/verification',
     isAuth,
     async (req, res, next) => {
       try {
-        res.json(await sendEmailVerification(getBaseUrl(req), req.auth.id));
+        res.json(await sendEmailVerification(req.auth.id));
       } catch(err) {
         next(err);
       }
     }
   );
-
-  /*
-  router.post(
-    '/refreshtoken',
-    async (req, res, next) => {
-      try {
-        const data = await AuthService.refreshToken({
-          token: req.body.refreshToken,
-          ipAddress: req.ip
-        });
-
-        if(!data)
-          throw createError(401);
-        else
-          res.json(data);
-      } catch(err) {
-        next(err);
-      }
-    }
-  )
-  */
 }

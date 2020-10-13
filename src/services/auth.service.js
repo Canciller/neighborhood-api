@@ -7,7 +7,6 @@ const config = require('../config');
 const EmailVerification = require('../models/emailVerification.model');
 
 class AuthService {
-
   generateJwtToken(payload)
   {
     return jwt.sign(payload, config.jwtSecret);
@@ -63,11 +62,10 @@ class AuthService {
     return true;
   }
 
-  async sendEmailVerification({
-    baseUrl,
-    userId
-  })
+  async sendEmailVerification(userId, verificationEndpoint)
   {
+    if(!verificationEndpoint) throw new Error('verificationEndpoint is undefined.');
+
     const emailVerification = await EmailVerification.findOneAndUpdate(
       {
         user: userId
@@ -80,7 +78,8 @@ class AuthService {
 
     if(!emailVerification) return null;
 
-    const verificationUrl = `${baseUrl}/${emailVerification.code}`;
+    const url = `${config.api.url}${config.api.prefix}`;
+    const verificationUrl = `${url}${verificationEndpoint}/${emailVerification.code}`;
 
     await MailerService.sendMail({
       to: emailVerification.user.email,

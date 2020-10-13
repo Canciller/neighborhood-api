@@ -11,11 +11,14 @@ if (!heroku && envFound.error) {
   throw new Error("⚠️  Couldn't find .env file  ⚠️");
 }
 
+const port = process.env.PORT || 8000;
+
 module.exports = {
-  port: process.env.PORT || 8000,
+  port,
   databaseURL: process.env.MONGODB_URL,
   jwtSecret: process.env.JWT_SECRET,
   api: {
+    url: process.env.DOMAIN || `http://localhost:${port}`,
     prefix: '/api'
   },
   saltRounds: process.env.SALT_ROUNDS || 10,

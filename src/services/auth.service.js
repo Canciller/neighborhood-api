@@ -53,11 +53,13 @@ class AuthService {
   async signUp({
     username,
     email,
+    name,
     password
   }) {
     const created = await UserService.create({
       username,
       email,
+      name,
       password
     });
 

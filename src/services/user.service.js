@@ -1,5 +1,5 @@
 const User = require('../models/user.model');
-const Permission = require('../models/permission.model');
+const Permission = require('../models/permission.model.js.old');
 
 class UserService {
   async create(doc) {

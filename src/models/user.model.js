@@ -25,11 +25,6 @@ const UserSchema = new mongoose.Schema({
         required: true,
         minlength: 6
     },
-    role: {
-      type: String,
-      index: true,
-      default: 'user'
-    },
     isActive: {
         type: Boolean,
         default: true,

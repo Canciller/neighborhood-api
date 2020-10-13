@@ -5,6 +5,10 @@ const AuthService = require('../../services/auth.service');
 const UserService = require('../../services/user.service');
 const createError = require('http-errors');
 const isAuth = require('../middlewares/isAuth');
+const {
+  signInValidator,
+  signUpValidator
+} = require('../validators/auth.validators');
 
 async function sendEmailVerification(userId)
 {
@@ -33,6 +37,7 @@ module.exports = (app) => {
 
   router.post(
     '/signin',
+    signInValidator,
     async (req, res, next) => {
       try {
         const data = await AuthService.signIn({
@@ -52,6 +57,7 @@ module.exports = (app) => {
 
   router.post(
     '/signup',
+    signUpValidator,
     async (req, res, next) => {
       try {
         const newUser = await AuthService.signUp(req.body);

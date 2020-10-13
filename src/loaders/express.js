@@ -55,6 +55,7 @@ module.exports = ({ app }) => {
         name: err.name,
         message: err.message,
         status: err.status,
+        details: err.details || []
       },
     });
   });

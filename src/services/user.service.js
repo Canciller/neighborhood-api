@@ -1,5 +1,4 @@
 const User = require('../models/user.model');
-const Permission = require('../models/permission.model.js.old');
 
 class UserService {
   async create(doc) {
@@ -54,28 +53,6 @@ class UserService {
 
   async exists(username) {
     return await User.exists({ username: username });
-  }
-
-  async getPermission(username, resource)
-  {
-    var user = await this.get(username);
-    if(!user) return null;
-
-    var permission = await Permission.findOne({ role: user.role, resource: resource });
-    if(!permission) return null;
-
-    return permission;
-  }
-
-  async getPermissionById(id, resource)
-  {
-    var user = await this.getById(id);
-    if(!user) return null;
-
-    var permission = await Permission.findOne({ role: user.role, resource: resource });
-    if(!permission) return null;
-
-    return permission;
   }
 }
 

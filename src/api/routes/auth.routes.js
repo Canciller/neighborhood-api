@@ -22,7 +22,7 @@ module.exports = (app) => {
         const myself = await UserService.getById(req.auth.id);
 
         if(!myself)
-          throw createError(404);
+          throw createError(404, 'Usuario no encontrado.');
         else
           res.json(myself);
       } catch(err) {
@@ -41,7 +41,7 @@ module.exports = (app) => {
         });
 
         if(!data)
-          throw createError(401);
+          throw createError(401, 'El nombre de usuario o contraseña son incorrectos.');
         else
           res.json(data);
       } catch(err) {
@@ -57,7 +57,7 @@ module.exports = (app) => {
         const newUser = await AuthService.signUp(req.body);
 
         if(!newUser)
-          throw createError(401);
+          throw createError(401, 'Ha ocurrido un problema al registrarse.');
         else
           res.json(newUser);
 

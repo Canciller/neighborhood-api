@@ -16,6 +16,20 @@ class AuthService {
     return crypto.randomBytes(64).toString('hex');
   }
 
+  async myself(id) {
+    const user = await UserService.getById(id);
+    if(!user) return null;
+
+    const payload = user.toJSON();
+
+    const token = this.generateJwtToken(payload);
+
+    return {
+      token,
+      ...payload
+    }
+  }
+
   async signIn({
     username,
     password,

@@ -2,7 +2,6 @@ const { Router } = require('express');
 const router = Router();
 const Logger = require('../../loaders/logger');
 const AuthService = require('../../services/auth.service');
-const UserService = require('../../services/user.service');
 const createError = require('http-errors');
 const isAuth = require('../middlewares/isAuth');
 const {
@@ -23,7 +22,7 @@ module.exports = (app) => {
     isAuth,
     async(req, res, next) => {
       try {
-        const myself = await UserService.getById(req.auth.id);
+        const myself = await AuthService.myself(req.auth.id);
 
         if(!myself)
           throw createError(404, 'Usuario no encontrado.');

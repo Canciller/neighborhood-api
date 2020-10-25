@@ -4,6 +4,11 @@ class UserService {
   /**
    * Create user.
    * @param {Object} doc
+   * @param {string} doc.username
+   * @param {string} doc.email
+   * @param {string} doc.name
+   * @param {string} doc.password
+   * @param {string} doc.role - Default 'user'.
    */
   async create(doc) {
     return await User.create(new User(doc));
@@ -75,6 +80,14 @@ class UserService {
    */
   async delete(username) {
     return await User.findOneAndRemove({ username });
+  }
+
+  /**
+   * Delete user with id.
+   * @param {string} id - User ID.
+   */
+  async deleteById(id) {
+    return await User.findByIdAndRemove(id);
   }
 
   /**

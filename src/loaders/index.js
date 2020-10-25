@@ -8,4 +8,4 @@ module.exports = async ({ expressApp }) => {
 
   await expressLoader({ app: expressApp });
   Logger.info('Express loaded');
-}
+};

@@ -12,8 +12,8 @@ class ValidationError extends Error {
 module.exports = (message) => {
   return (req, res, next) => {
     const details = validationResult(req);
-    if(details &&
-      details.errors.length !== 0) next(new ValidationError(message, details.errors));
+    if (details && details.errors.length !== 0)
+      next(new ValidationError(message, details.errors));
     else next();
-  }
-}
+  };
+};

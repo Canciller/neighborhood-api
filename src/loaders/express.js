@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const methodOverride = require('method-override');
 const createError = require('http-errors');
-const expressWinston = require('express-winston')
+const expressWinston = require('express-winston');
 const config = require('../config');
 const routes = require('../api');
 const Logger = require('./logger');
@@ -21,11 +21,13 @@ module.exports = ({ app }) => {
 
   app.enable('trust proxy');
 
-  app.use(expressWinston.logger({
-    meta: false,
-    expressFormat: true,
-    winstonInstance: Logger
-  }));
+  app.use(
+    expressWinston.logger({
+      meta: false,
+      expressFormat: true,
+      winstonInstance: Logger,
+    })
+  );
 
   app.use(cors());
 
@@ -44,8 +46,7 @@ module.exports = ({ app }) => {
     err.status = err.status || 500;
 
     // express-jwt UnauthorizedError
-    if(err instanceof UnauthorizedError)
-      err.message = 'Token invalido.'
+    if (err instanceof UnauthorizedError) err.message = 'Token invalido.';
 
     Logger.error(err);
 
@@ -55,7 +56,7 @@ module.exports = ({ app }) => {
         name: err.name,
         message: err.message,
         status: err.status,
-        details: err.details || []
+        details: err.details || [],
       },
     });
   });

@@ -8,4 +8,4 @@ module.exports = () => {
   visit(app);
   qr(app);
   return app;
-}
+};

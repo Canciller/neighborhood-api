@@ -16,11 +16,12 @@ const msg = {
   },
   email: {
     invalid: 'El email ingresado es invalido.',
-    unique: (email) => `El email '${email}' ya esta relacionado con otra cuenta.`,
+    unique: (email) =>
+      `El email '${email}' ya esta relacionado con otra cuenta.`,
   },
   password: {
     required: 'La contraseña es requerida',
-    length: 'La contraseña debe ser de mínimo 6 caracteres.'
+    length: 'La contraseña debe ser de mínimo 6 caracteres.',
   },
 };
 
@@ -42,7 +43,7 @@ const usernameValidator = body('username')
   .withMessage(msg.username.invalid)
   // Length
   .isLength({
-    max: 32
+    max: 32,
   })
   .withMessage(msg.username.length);
 
@@ -74,46 +75,39 @@ const passwordValidator = body('password')
   .withMessage(msg.password.required)
   // Length
   .isLength({
-    min: 6
+    min: 6,
   })
   .withMessage(msg.password.length);
 
 module.exports = {
   usernameValidator: [
     usernameValidator,
-    validate('Error en validación de nombre de usuario.')
+    validate('Error en validación de nombre de usuario.'),
   ],
-  emailValidator: [
-    emailValidator,
-    validate('Error en validación de email.')
-  ],
-  nameValidator: [
-    nameValidator,
-    validate('Error en validación de nombre.')
-  ],
+  emailValidator: [emailValidator, validate('Error en validación de email.')],
+  nameValidator: [nameValidator, validate('Error en validación de nombre.')],
   passwordValidator: [
     passwordValidator,
-    validate('Error en validación de contraseña.')
+    validate('Error en validación de contraseña.'),
   ],
   signInValidator: [
     usernameValidator,
     passwordValidator,
-    validate('Error en validación de ingreso.')
+    validate('Error en validación de ingreso.'),
   ],
   signUpValidator: [
     usernameValidator,
-    body('username').custom(async username => {
-        var exists = await UserService.exists(username);
-        if(exists) throw createError(403, msg.username.unique(username));
-      })
-    ,
+    body('username').custom(async (username) => {
+      var exists = await UserService.exists(username);
+      if (exists) throw createError(403, msg.username.unique(username));
+    }),
     emailValidator,
-    body('email').custom(async email => {
-        var exists = await UserService.emailExists(email);
-        if(exists) throw createError(403, msg.email.unique(email));
-      }),
+    body('email').custom(async (email) => {
+      var exists = await UserService.emailExists(email);
+      if (exists) throw createError(403, msg.email.unique(email));
+    }),
     nameValidator,
     passwordValidator,
-    validate('Error en validación de registro.')
+    validate('Error en validación de registro.'),
   ],
-}
+};

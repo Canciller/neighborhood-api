@@ -19,15 +19,15 @@ module.exports = {
   jwtSecret: process.env.JWT_SECRET,
   api: {
     url: process.env.DOMAIN || `http://localhost:${port}`,
-    prefix: '/api'
+    prefix: '/api',
   },
   saltRounds: process.env.SALT_ROUNDS || 10,
   mailer: {
     service: process.env.MAILER_SERVICE,
     auth: {
       user: process.env.MAILER_USER,
-      pass: process.env.MAILER_PASS
-    }
+      pass: process.env.MAILER_PASS,
+    },
   },
   appName: process.env.APP_NAME,
-}
+};

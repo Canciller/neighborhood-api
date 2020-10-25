@@ -9,7 +9,7 @@ async function start() {
   await loaders({ expressApp: app });
 
   app.listen(config.port, (err) => {
-    if(err) {
+    if (err) {
       Logger.error(err);
       process.exit(1);
     }

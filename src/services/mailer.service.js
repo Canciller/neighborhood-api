@@ -1,8 +1,7 @@
 const nodemailer = require('nodemailer');
 const config = require('../config');
 
-class MailerService
-{
+class MailerService {
   constructor() {
     this.transporter = nodemailer.createTransport({
       service: config.mailer.service,
@@ -13,19 +12,20 @@ class MailerService
     });
   }
 
+  /**
+   * Send email.
+   * @param {Object} options
+   */
   async sendMail(options) {
     var mailOptions = {};
-    if(options instanceof Object)
-      mailOptions = options;
+    if (options instanceof Object) mailOptions = options;
 
-    if(!mailOptions.from)
-      mailOptions.from = config.mailer.auth.user;
+    if (!mailOptions.from) mailOptions.from = config.mailer.auth.user;
 
-    if(!mailOptions.subject)
-      mailOptions.subject = config.appName;
+    if (!mailOptions.subject) mailOptions.subject = config.appName;
 
     return await this.transporter.sendMail(mailOptions);
   }
 }
 
-module.exports = new MailerService;
+module.exports = new MailerService();

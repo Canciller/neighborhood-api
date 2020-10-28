@@ -4,6 +4,9 @@ const { body } = require('express-validator');
 const createError = require('http-errors');
 
 const msg = {
+  usernameOrEmail: {
+    required: 'El nombre de usuario o email es requerido.',
+  },
   username: {
     required: 'El nombre de usuario es requerido.',
     unique: (username) => `El nombre de usuario '${username}' ya fue tomado.`,
@@ -28,6 +31,16 @@ const msg = {
 const matches = {
   username: /^[0-9a-zA-Z_-]+$/,
 };
+
+/**
+ * Username or Email validator
+ */
+const usernameOrEmailValidator = body('username')
+  // Required
+  .not()
+  .isEmpty()
+  .withMessage(msg.usernameOrEmail.required)
+  .trim()
 
 /**
  * Username validator
@@ -91,7 +104,7 @@ module.exports = {
     validate('Error en validación de contraseña.'),
   ],
   signInValidator: [
-    usernameValidator,
+    usernameOrEmailValidator,
     passwordValidator,
     validate('Error en validación de ingreso.'),
   ],

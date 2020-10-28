@@ -1,4 +1,14 @@
 const User = require('../models/user.model');
+const ObjectId = require('mongoose').Types.ObjectId;
+
+/**
+ * TODO
+ * Create tests for:
+ *  update
+ *  verify
+ *  delete
+ *  exists
+ */
 
 class UserService {
   /**
@@ -9,8 +19,10 @@ class UserService {
    * @param {string} doc.name
    * @param {string} doc.password
    * @param {string} doc.role - Default 'user'.
+   * @param {boolean} doc.isActive - Default true.
+   * @param {boolean} doc.isVerified - Default false.
    */
-  async create(doc) {
+  async create(doc = {}) {
     return await User.create(new User(doc));
   }
 
@@ -32,8 +44,15 @@ class UserService {
    * @param {string} id - User ID.
    * @param {Object} doc
    */
-  async updateById(id, doc) {
-    return await User.findByIdAndUpdate(id, { $set: doc }, { new: true });
+  async updateById(id, doc = {}) {
+    delete doc.id;
+    delete doc.isVerified;
+    delete doc.createdAt;
+    delete doc.updatedAt;
+
+    if (ObjectId.isValid(id))
+      return await User.findByIdAndUpdate(id, { $set: doc }, { new: true });
+    else return null;
   }
 
   /**
@@ -51,7 +70,8 @@ class UserService {
    * @param {string} id - User ID.
    */
   async getById(id) {
-    return await User.findById(id);
+    if (ObjectId.isValid(id)) return await User.findById(id);
+    else return null;
   }
 
   /**
@@ -87,7 +107,16 @@ class UserService {
    * @param {string} id - User ID.
    */
   async deleteById(id) {
-    return await User.findByIdAndRemove(id);
+    if (ObjectId.isValid(id)) return await User.findByIdAndRemove(id);
+    return null;
+  }
+
+  /**
+   * Delete many users by id.
+   * @param {Array} arr - User array.
+   */
+  async deleteManyById(arr = []) {
+    // TODO: Implement this.
   }
 
   /**
@@ -95,9 +124,24 @@ class UserService {
    * @param {Object} query
    * @param {number} query.skip - Number of users to be skipped.
    * @param {number} query.limit - Limit number of users to be returned.
+   * @param {isActive} query.isActive
+   * @param {isVerified} query.isVerified
+   * @param {role} query.role - Role of users to be returned.
    */
-  async list(query) {
-    return await User.list(query);
+  async list({ skip = 0, limit = 100, isActive, isVerified, role } = {}) {
+    let query = {};
+
+    if (isActive !== undefined) query.isActive = isActive;
+    if (isVerified !== undefined) query.isVerified = isVerified;
+    if (role !== undefined) query.role = role;
+
+    return await User.find(query)
+      .sort({
+        createdAt: -1,
+      })
+      .skip(+skip)
+      .limit(+limit)
+      .exec();
   }
 
   /**
@@ -124,6 +168,24 @@ class UserService {
    */
   async emailExists(email) {
     return await User.exists({ email });
+  }
+
+  /**
+   * Check if user is active by id.
+   * @param {string} id - User ID.
+   */
+  async isActiveById(id) {
+    const user = await this.getById(id);
+    return user && user.isActive;
+  }
+
+  /**
+   * Check if user is verified by id.
+   * @param {string} id - User ID.
+   */
+  async isVerifiedById(id) {
+    const user = await this.getById(id);
+    return user && user.isVerified;
   }
 }
 

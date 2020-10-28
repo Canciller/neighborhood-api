@@ -5,8 +5,8 @@ const AuthService = require('../../services/auth.service');
 const createError = require('http-errors');
 const isAuth = require('../middlewares/isAuth');
 const {
-  signInValidator,
-  signUpValidator,
+  signInValidate,
+  signUpValidate,
 } = require('../validators/auth.validators');
 
 /**
@@ -37,7 +37,7 @@ module.exports = (app) => {
   /**
    * Sign in.
    */
-  router.post('/signin', signInValidator, async (req, res, next) => {
+  router.post('/signin', signInValidate, async (req, res, next) => {
     try {
       const data = await AuthService.signIn({
         username: req.body.username,
@@ -58,7 +58,7 @@ module.exports = (app) => {
   /**
    * Sign up.
    */
-  router.post('/signup', signUpValidator, async (req, res, next) => {
+  router.post('/signup', signUpValidate, async (req, res, next) => {
     try {
       const newUser = await AuthService.signUp(req.body);
 
@@ -101,12 +101,7 @@ module.exports = (app) => {
       Logger.error(err);
       res
         .status(500)
-        .send(
-          template.replace(
-            '%message%',
-            'Ha habido un problema intentalo de nuevo mas tarde.'
-          )
-        );
+        .send('Ha habido un problema intentalo de nuevo mas tarde.');
     }
   });
 

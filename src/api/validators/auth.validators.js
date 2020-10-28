@@ -33,17 +33,17 @@ const matches = {
 };
 
 /**
- * Username or Email validator
+ * Username or Email validator.
  */
 const usernameOrEmailValidator = body('username')
   // Required
   .not()
   .isEmpty()
   .withMessage(msg.usernameOrEmail.required)
-  .trim()
+  .trim();
 
 /**
- * Username validator
+ * Username validator.
  */
 const usernameValidator = body('username')
   // Required
@@ -61,7 +61,15 @@ const usernameValidator = body('username')
   .withMessage(msg.username.length);
 
 /**
- * Email validator
+ * Username unique validator.
+ */
+const usernameUniqueValidator = body('username').custom(async (username) => {
+  var exists = await UserService.exists(username);
+  if (exists) throw createError(403, msg.username.unique(username));
+});
+
+/**
+ * Email validator.
  */
 const emailValidator = body('email')
   // Valid
@@ -69,7 +77,15 @@ const emailValidator = body('email')
   .withMessage(msg.email.invalid);
 
 /**
- * Name validator
+ * Email unique validator.
+ */
+const emailUniqueValidator = body('email').custom(async (email) => {
+  var exists = await UserService.emailExists(email);
+  if (exists) throw createError(403, msg.email.unique(email));
+});
+
+/**
+ * Name validator.
  */
 const nameValidator = body('name')
   // Required
@@ -79,7 +95,7 @@ const nameValidator = body('name')
   .trim();
 
 /**
- * Password validator
+ * Password validator.
  */
 const passwordValidator = body('password')
   // Required
@@ -93,32 +109,24 @@ const passwordValidator = body('password')
   .withMessage(msg.password.length);
 
 module.exports = {
-  usernameValidator: [
-    usernameValidator,
-    validate('Error en validación de nombre de usuario.'),
-  ],
-  emailValidator: [emailValidator, validate('Error en validación de email.')],
-  nameValidator: [nameValidator, validate('Error en validación de nombre.')],
-  passwordValidator: [
-    passwordValidator,
-    validate('Error en validación de contraseña.'),
-  ],
-  signInValidator: [
+  authMessages: msg,
+  authMatches: matches,
+  usernameValidator,
+  usernameUniqueValidator,
+  emailValidator,
+  emailUniqueValidator,
+  nameValidator,
+  passwordValidator,
+  signInValidate: [
     usernameOrEmailValidator,
     passwordValidator,
     validate('Error en validación de ingreso.'),
   ],
-  signUpValidator: [
+  signUpValidate: [
     usernameValidator,
-    body('username').custom(async (username) => {
-      var exists = await UserService.exists(username);
-      if (exists) throw createError(403, msg.username.unique(username));
-    }),
+    usernameUniqueValidator,
     emailValidator,
-    body('email').custom(async (email) => {
-      var exists = await UserService.emailExists(email);
-      if (exists) throw createError(403, msg.email.unique(email));
-    }),
+    emailUniqueValidator,
     nameValidator,
     passwordValidator,
     validate('Error en validación de registro.'),

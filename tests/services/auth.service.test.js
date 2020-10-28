@@ -7,7 +7,7 @@ afterEach(async () => await dbHandler.clearDatabase());
 afterAll(async () => await dbHandler.closeDatabase());
 
 describe('AuthService', () => {
-  describe('Sign in', () => {
+  describe('Change password', () => {
     it('Success', () => {});
   });
 });

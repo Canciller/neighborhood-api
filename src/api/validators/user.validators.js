@@ -51,7 +51,7 @@ const optionalUsernameValidator = body('username')
 const usernameUniqueExceptSelfValidator = body('username').custom(
   async (username, { req }) => {
     let id = null;
-    if (req.auth instanceof Object) id = req.auth.id ? req.auth.id : null;
+    if (req.params) id = req.params.id ? req.params.id : null;
 
     var user = await UserService.get(username);
     if (user !== null && user.id !== id)
@@ -75,7 +75,7 @@ const optionalEmailValidator = body('email')
 const emailUniqueExceptSelfValidator = body('email').custom(
   async (email, { req }) => {
     let id = null;
-    if (req.auth instanceof Object) id = req.auth.id ? req.auth.id : null;
+    if (req.params) id = req.params.id ? req.params.id : null;
 
     var user = await UserService.get(email);
     if (user !== null && user.id !== id)

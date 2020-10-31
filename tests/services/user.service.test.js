@@ -99,6 +99,15 @@ describe('User service', () => {
       expect(updated).toHaveProperty('email', created.email);
       expect(updated).toHaveProperty('name', created.name);
       expect(updated).toHaveProperty('role', 'residente');
+
+      const sameUsernameAndEmail = await UserService.updateById(updated.id, {
+        username: created.username,
+        email: created.email
+      });
+
+      expect(sameUsernameAndEmail).toHaveProperty('id', sameUsernameAndEmail.id);
+      expect(sameUsernameAndEmail).toHaveProperty('username', sameUsernameAndEmail.username);
+      expect(sameUsernameAndEmail).toHaveProperty('email', sameUsernameAndEmail.email);
     });
 
     it('Error - Not unique', async () => {

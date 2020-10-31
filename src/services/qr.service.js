@@ -1,7 +1,27 @@
+const QRCode = require('qrcode');
 const QR = require('../models/qr.model');
 const UserService = require('../services/user.service');
 
-class QrService {
+class QRService {
+  /**
+   * Generate QR code for user with userId.
+   * @param {string} userId - User ID.
+   */
+  async generate(userId) {
+    const base64Image = await QRCode.toDataURL(userId, {
+      type: 'image/jpeg',
+      quality: 1,
+    });
+
+    return base64Image;
+
+    /*
+    return await QR.create(new QR({
+      user: userId,
+    }))
+    */
+  }
+
   async create(doc) {
     return await QR.create(new QR(doc));
   }
@@ -51,4 +71,4 @@ class QrService {
   }
 }
 
-module.exports = new QrService();
+module.exports = new QRService();

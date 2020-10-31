@@ -1,24 +1,33 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const QrSchema = new mongoose.Schema(
+const QRSchema = new mongoose.Schema(
   {
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
+      unique: true,
     },
     code: {
       type: String,
       required: true,
-      match: /^[0-9a-zA-Z_-]+$/,
+      unique: true,
     },
     isActive: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
   { versionKey: false }
 );
 
-module.exports = mongoose.model('QR', QrSchema);
+QRSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: function (doc, ret) {
+    delete ret._id;
+  },
+});
+
+module.exports = mongoose.model('QR', QRSchema);

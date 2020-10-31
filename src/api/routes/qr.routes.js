@@ -1,13 +1,13 @@
 const { Router } = require('express');
 const router = Router();
-const QrService = require('../../services/qr.service');
+const QRService = require('../../services/qr.service');
 
 module.exports = (app) => {
   app.use('/qrs', router);
 
   router.get('', async (req, res, next) => {
     try {
-      const qr = await QrService.getAll();
+      const qr = await QRService.getAll();
       if (!qr) throw createError(404, 'QR no encontrados.');
       else res.json(qr);
     } catch (error) {
@@ -17,7 +17,7 @@ module.exports = (app) => {
 
   router.get('/actives', async (req, res, next) => {
     try {
-      const qr = await QrService.getAllActiveQR();
+      const qr = await QRService.getAllActiveQR();
       if (!qr) throw createError(404, 'QR no encontrados.');
       else res.json(qr);
     } catch (error) {
@@ -27,7 +27,7 @@ module.exports = (app) => {
 
   router.post('', async (req, res, next) => {
     try {
-      const qr = await QrService.create(req.body);
+      const qr = await QRService.create(req.body);
       if (!qr)
         throw createError(401, 'Ha ocurrido un problema al crear el qr.');
       else res.json(qr);
@@ -38,7 +38,7 @@ module.exports = (app) => {
 
   router.get('/:username', async (req, res, next) => {
     try {
-      const qr = await QrService.get(req.params.username);
+      const qr = await QRService.get(req.params.username);
       if (!qr) throw createError(404, 'QR no encontrado.');
       else res.json(qr);
     } catch (error) {
@@ -48,7 +48,7 @@ module.exports = (app) => {
 
   router.get('/qr/:id', async (req, res, next) => {
     try {
-      const qr = await QrService.getById(req.params.id);
+      const qr = await QRService.getById(req.params.id);
       if (!qr) throw createError(404, 'QR no encontrado.');
       else res.json(qr);
     } catch (error) {
@@ -58,7 +58,7 @@ module.exports = (app) => {
 
   router.put('/block/:id', async (req, res, next) => {
     try {
-      const qr = await QrService.blockQR(req.params.id);
+      const qr = await QRService.blockQR(req.params.id);
       if (!qr)
         throw createError(401, 'Ha ocurrido un problema al bloquear el qr.');
       else res.json(qr);
@@ -69,7 +69,7 @@ module.exports = (app) => {
 
   router.put('/unblock/:id', async (req, res, next) => {
     try {
-      const qr = await QrService.unblockQR(req.params.id);
+      const qr = await QRService.unblockQR(req.params.id);
       if (!qr)
         throw createError(401, 'Ha ocurrido un problema al bloquear el qr.');
       else res.json(qr);
@@ -80,7 +80,7 @@ module.exports = (app) => {
 
   router.put('/regenerate', async (req, res, next) => {
     try {
-      const qr = await QrService.regenerateQR(req.body.id, req.body.code);
+      const qr = await QRService.regenerateQR(req.body.id, req.body.code);
       if (!qr)
         throw createError(401, 'Ha ocurrido un problema al regenerar el qr.');
       else res.json(qr);

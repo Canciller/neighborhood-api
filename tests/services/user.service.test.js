@@ -8,7 +8,7 @@ beforeAll(async () => await dbHandler.connect());
 afterEach(async () => await dbHandler.clearDatabase());
 afterAll(async () => await dbHandler.closeDatabase());
 
-let valid = {
+let user = {
   username: 'valid',
   email: 'valid@email.com',
   password: 'password',
@@ -26,12 +26,12 @@ let admin = {
   username: 'admin',
   email: 'admin@email.com',
   password: 'password',
-  name: 'admin',
-  role: 'admin',
+  name: 'administrador',
+  role: 'administrador',
 };
 
 let invalidUsername = {
-  ...valid,
+  ...user,
   username: '??##!!$$  ==++',
 };
 
@@ -41,9 +41,9 @@ describe('User service', () => {
    */
   describe('Create', () => {
     it('Success - Default role', async () => {
-      await expect(UserService.create(valid)).resolves.toHaveProperty(
+      await expect(UserService.create(user)).resolves.toHaveProperty(
         'role',
-        'user'
+        'residente'
       );
 
       await expect(UserService.create(extra)).resolves.toHaveProperty(
@@ -53,7 +53,7 @@ describe('User service', () => {
 
       await expect(UserService.create(admin)).resolves.toHaveProperty(
         'role',
-        'admin'
+        'administrador'
       );
     });
 
@@ -65,8 +65,8 @@ describe('User service', () => {
 
     it('Error - Not unique', async () => {
       await expect(async () => {
-        await UserService.create(valid);
-        await UserService.create(valid);
+        await UserService.create(user);
+        await UserService.create(user);
       }).rejects.toThrow();
     });
 
@@ -88,7 +88,7 @@ describe('User service', () => {
    */
   describe('Update', () => {
     it('Success', async () => {
-      const created = await UserService.create(valid);
+      const created = await UserService.create(user);
 
       const updated = await UserService.updateById(created.id, {
         username: 'updated',
@@ -98,11 +98,11 @@ describe('User service', () => {
       expect(updated).toHaveProperty('username', 'updated');
       expect(updated).toHaveProperty('email', created.email);
       expect(updated).toHaveProperty('name', created.name);
-      expect(updated).toHaveProperty('role', 'user');
+      expect(updated).toHaveProperty('role', 'residente');
     });
 
     it('Error - Not unique', async () => {
-      const createdValid = await UserService.create(valid);
+      const createdValid = await UserService.create(user);
       const createdExtra = await UserService.create(extra);
 
       await expect(
@@ -113,18 +113,18 @@ describe('User service', () => {
     });
 
     it('Ignore invalid fields', async () => {
-      const created = await UserService.create(valid);
+      const created = await UserService.create(user);
 
       const updated = await UserService.updateById(created.id, {
         invalid: 'invalid',
       });
 
       expect(updated).not.toHaveProperty('invalid');
-      expect(updated).toHaveProperty('username', valid.username);
+      expect(updated).toHaveProperty('username', user.username);
     });
 
     it('Invalid role', async () => {
-      const created = await UserService.create(valid);
+      const created = await UserService.create(user);
 
       await expect(
         UserService.updateById(created.id, {
@@ -241,7 +241,7 @@ describe('User service', () => {
   describe('Get', () => {
     it('Success', async () => {
       // Get
-      const created = await UserService.create(valid);
+      const created = await UserService.create(user);
       const found = await UserService.getById(created.id);
 
       expect(found).toHaveProperty('id', created.id);
@@ -275,7 +275,7 @@ describe('User service', () => {
   describe('Delete', () => {
     it('Success', async () => {
       // Delete
-      const created = await UserService.create(valid);
+      const created = await UserService.create(user);
       const deleted = await UserService.deleteById(created.id);
 
       expect(deleted).toHaveProperty('id', created.id);

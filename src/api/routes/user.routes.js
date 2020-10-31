@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const createError = require('http-errors');
 const router = Router();
 const UserService = require('../../services/user.service');
 const isAllow = require('../middlewares/isAllow');
@@ -6,6 +7,8 @@ const {
   createUserValidate,
   updateUserValidate,
 } = require('../validators/user.validators');
+
+const UserNotFoundError = createError(404, 'Usuario no encontrado.');
 
 module.exports = (app) => {
   app.use('/users', isAllow('users'), router);
@@ -25,7 +28,10 @@ module.exports = (app) => {
       };
 
       try {
-        res.json(await UserService.list(query));
+        const user = await UserService.list(query);
+
+        if(user) res.json(user);
+        else throw UserNotFoundError;
       } catch (err) {
         next(err);
       }
@@ -36,7 +42,10 @@ module.exports = (app) => {
      */
     .post(createUserValidate, async (req, res, next) => {
       try {
-        res.json(await UserService.create(req.body));
+        const user = await UserService.create(req.body);
+
+        if(user) res.json(user);
+        else throw UserNotFoundError;
       } catch (err) {
         next(err);
       }
@@ -56,7 +65,10 @@ module.exports = (app) => {
      */
     .get(async (req, res, next) => {
       try {
-        res.json(await UserService.getById(req.params.id));
+        const user = await UserService.getById(req.params.id);
+
+        if(user) res.json(user);
+        else throw UserNotFoundError;
       } catch (err) {
         next(err);
       }
@@ -67,7 +79,10 @@ module.exports = (app) => {
      */
     .delete(async (req, res, next) => {
       try {
-        res.json(await UserService.deleteById(req.params.id));
+        const user = await UserService.deleteById(req.params.id);
+
+        if(user) res.json(user);
+        else throw UserNotFoundError;
       } catch (err) {
         next(err);
       }
@@ -78,7 +93,10 @@ module.exports = (app) => {
      */
     .put(updateUserValidate, async (req, res, next) => {
       try {
-        res.json(await UserService.updateById(req.params.id, req.body));
+        const user = await UserService.updateById(req.params.id, req.body);
+
+        if(user) res.json(user);
+        else throw UserNotFoundError;
       } catch (err) {
         next(err);
       }

@@ -13,7 +13,7 @@ const {
   passwordValidator,
 } = require('./auth.validators');
 
-const roles = "'admin', 'guard', o 'user'";
+const roles = "'administrador', 'guardia', o 'residente'";
 
 const msg = {
   role: {
@@ -26,7 +26,7 @@ const msg = {
 };
 
 const matches = {
-  role: /\b(?:admin|guard|user)\b/,
+  role: /\b(?:administrador|guardia|residente)\b/,
 };
 
 /**

@@ -8,7 +8,8 @@ class QRService {
    * @param {string} userId - User ID.
    */
   async generate(userId) {
-    const base64Image = await QRCode.toDataURL(userId, {
+    const url = "http://localhost:8000/api/qrs/user/" + userId
+    const base64Image = await QRCode.toDataURL(url, {
       type: 'image/jpeg',
       quality: 1,
     });
@@ -23,7 +24,10 @@ class QRService {
   }
 
   async create(doc) {
-    return await QR.create(new QR(doc));
+    if(this.existsById(doc.user)) {
+      return await this.regenerateQR(doc.user);
+    }
+    else return await QR.create(new QR(doc));
   }
 
   async getById(id) {
@@ -34,6 +38,16 @@ class QRService {
     return await QR.findOne({
       user: await UserService.get(username),
     }).populate('user');
+  }
+
+  async getByUserID(id){
+    return await QR.findOne({
+      user: await UserService.getById(id),
+    }).populate('user');
+  }
+
+  async existsById(id) {
+    return await QR.exists({ _id: id });
   }
 
   async getAllActiveQR() {
@@ -58,12 +72,13 @@ class QRService {
     );
   }
 
-  async regenerateQR(id, qr) {
-    return await QR.findByIdAndUpdate(
-      id,
-      { $set: { isActive: true, code: qr } },
-      { new: true }
-    );
+
+  async regenerateQR(userID){
+    return await QR.findOneAndUpdate(
+      {user: userID}, 
+      {code : await this.generate(userID)},{
+        new: true
+      });
   }
 
   async getAll() {

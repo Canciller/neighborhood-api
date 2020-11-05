@@ -36,6 +36,7 @@ module.exports = (app) => {
     }
   });
 
+  /*
   router.get('/:username', async (req, res, next) => {
     try {
       const qr = await QRService.get(req.params.username);
@@ -44,11 +45,26 @@ module.exports = (app) => {
     } catch (error) {
       next(error);
     }
+  });*/
+
+  router.get('/user/:userID', async (req, res, next) => {
+    try {
+      const qr = await QRService.getByUserID(req.params.userID);
+      if (!qr) throw createError(404, 'QR no encontrado.');
+      else {
+        //res.json(qr);
+        if(qr.isActive) res.send(`<h2>Puede pasar</h2>`);
+        else res.send(`<h2>No puede pasar</h2>`);
+      }
+    } catch (error) {
+      next(error);
+    }
   });
 
-  router.get('/qr/:id', async (req, res, next) => {
+
+  router.get('/qr/:userID', async (req, res, next) => {
     try {
-      const qr = await QRService.getById(req.params.id);
+      const qr = await QRService.generate(req.params.userID);
       if (!qr) throw createError(404, 'QR no encontrado.');
       else res.json(qr);
     } catch (error) {
@@ -80,7 +96,7 @@ module.exports = (app) => {
 
   router.put('/regenerate', async (req, res, next) => {
     try {
-      const qr = await QRService.regenerateQR(req.body.id, req.body.code);
+      const qr = await QRService.regenerateQR(req.body.id);
       if (!qr)
         throw createError(401, 'Ha ocurrido un problema al regenerar el qr.');
       else res.json(qr);

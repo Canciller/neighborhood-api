@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const QRCode = require('qrcode');
 
 const QRSchema = new mongoose.Schema(
   {
@@ -11,15 +12,15 @@ const QRSchema = new mongoose.Schema(
     },
     code: {
       type: String,
-      required: true,
+      required: false,
       unique: true,
     },
     isActive: {
       type: Boolean,
-      default: false,
+      default: true,
     },
   },
-  { versionKey: false }
+  { timestamps: true, versionKey: false }
 );
 
 QRSchema.set('toJSON', {
@@ -29,5 +30,20 @@ QRSchema.set('toJSON', {
     delete ret._id;
   },
 });
+
+QRSchema.pre('save', async function() {
+  const document = this;
+
+    const url = "http://localhost:8000/api/qrs/user/" + document.user;
+    const base64Image = await QRCode.toDataURL(url, {
+      type: 'image/jpeg',
+      quality: 1,
+    });
+
+    document.code = base64Image;
+   
+ 
+});
+
 
 module.exports = mongoose.model('QR', QRSchema);

@@ -16,6 +16,7 @@ const QRSchema = new mongoose.Schema(
       unique: true,
     },
     isActive: {
+      required: false,
       type: Boolean,
       default: true,
     },

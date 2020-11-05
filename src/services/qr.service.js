@@ -24,7 +24,7 @@ class QRService {
   }
 
   async create(doc) {
-    if(this.existsById(doc.user)) {
+    if(await this.existsByUserId(doc.user)) {
       return await this.regenerateQR(doc.user);
     }
     else return await QR.create(new QR(doc));
@@ -46,8 +46,8 @@ class QRService {
     }).populate('user');
   }
 
-  async existsById(id) {
-    return await QR.exists({ _id: id });
+  async existsByUserId(id) {
+    return await QR.exists({ user: id });
   }
 
   async getAllActiveQR() {

@@ -30,7 +30,7 @@ module.exports = (app) => {
       try {
         const user = await UserService.list(query);
 
-        if(user) res.json(user);
+        if (user) res.json(user);
         else throw UserNotFoundError;
       } catch (err) {
         next(err);
@@ -44,8 +44,8 @@ module.exports = (app) => {
       try {
         const user = await UserService.create(req.body);
 
-        if(user) res.json(user);
-        else throw UserNotFoundError;
+        if (user) res.json(user);
+        else throw new Error('Ha ocurrio un problema al crear el usuario.');
       } catch (err) {
         next(err);
       }
@@ -67,7 +67,7 @@ module.exports = (app) => {
       try {
         const user = await UserService.getById(req.params.id);
 
-        if(user) res.json(user);
+        if (user) res.json(user);
         else throw UserNotFoundError;
       } catch (err) {
         next(err);
@@ -81,7 +81,7 @@ module.exports = (app) => {
       try {
         const user = await UserService.deleteById(req.params.id);
 
-        if(user) res.json(user);
+        if (user) res.json(user);
         else throw UserNotFoundError;
       } catch (err) {
         next(err);
@@ -95,7 +95,7 @@ module.exports = (app) => {
       try {
         const user = await UserService.updateById(req.params.id, req.body);
 
-        if(user) res.json(user);
+        if (user) res.json(user);
         else throw UserNotFoundError;
       } catch (err) {
         next(err);

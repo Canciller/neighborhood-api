@@ -23,7 +23,10 @@ describe('QRService', () => {
       let qrCreated = await QRService.generate(userCreated.id);
 
       // Create
-      expect(qrCreated).toHaveProperty('user', mongoose.Types.ObjectId(userCreated.id));
+      expect(qrCreated).toHaveProperty(
+        'user',
+        mongoose.Types.ObjectId(userCreated.id)
+      );
       expect(qrCreated).toHaveProperty('code');
       expect(qrCreated).toHaveProperty('image');
       expect(qrCreated).toHaveProperty('enabled', false);
@@ -33,25 +36,34 @@ describe('QRService', () => {
 
       // Update
       let qrUpdated = await QRService.generate(userCreated.id);
-      expect(qrUpdated).toHaveProperty('user', mongoose.Types.ObjectId(userCreated.id));
+      expect(qrUpdated).toHaveProperty(
+        'user',
+        mongoose.Types.ObjectId(userCreated.id)
+      );
       expect(qrUpdated).not.toHaveProperty('code', qrCreated.code);
       expect(qrUpdated).not.toHaveProperty('image', qrCreated.image);
       expect(qrUpdated).toHaveProperty('enabled', true);
     });
 
-    it('Enable and disable', async() => {
+    it('Enable and disable', async () => {
       const userCreated = await UserService.create(user);
       let qrCreated = await QRService.generate(userCreated.id);
 
       // Enable
       let qr = await QRService.enable(userCreated.id);
-      expect(qr).toHaveProperty('user', mongoose.Types.ObjectId(userCreated.id));
+      expect(qr).toHaveProperty(
+        'user',
+        mongoose.Types.ObjectId(userCreated.id)
+      );
       expect(qr).toHaveProperty('code', qrCreated.code);
       expect(qr).toHaveProperty('image', qrCreated.image);
       expect(qr).toHaveProperty('enabled', true);
 
       qr = await QRService.disable(userCreated.id);
-      expect(qr).toHaveProperty('user', mongoose.Types.ObjectId(userCreated.id));
+      expect(qr).toHaveProperty(
+        'user',
+        mongoose.Types.ObjectId(userCreated.id)
+      );
       expect(qr).toHaveProperty('code', qrCreated.code);
       expect(qr).toHaveProperty('image', qrCreated.image);
       expect(qr).toHaveProperty('enabled', false);
@@ -77,7 +89,10 @@ describe('QRService', () => {
       await QRService.generate(userCreated.id);
       let qrFound = await QRService.get(userCreated.id);
 
-      expect(qrFound).toHaveProperty('user', mongoose.Types.ObjectId(userCreated.id));
+      expect(qrFound).toHaveProperty(
+        'user',
+        mongoose.Types.ObjectId(userCreated.id)
+      );
       expect(qrFound).toHaveProperty('code');
       expect(qrFound).toHaveProperty('image');
       expect(qrFound).toHaveProperty('enabled', false);
@@ -109,15 +124,23 @@ describe('QRService', () => {
       const userCreated = await UserService.create(user);
       let qrCreated = await QRService.generate(userCreated.id);
 
-      let match = await QRService.match(userCreated.id, QRService.generateCode());
+      let match = await QRService.match(
+        userCreated.id,
+        QRService.generateCode()
+      );
       expect(match).toBeFalsy();
+
+      await QRService.enable(userCreated.id);
 
       match = await QRService.match(userCreated.id, qrCreated.code);
       expect(match).toBeTruthy();
     });
 
     it('User not found', async () => {
-      let match = await QRService.match(mongoose.Types.ObjectId(), QRService.generateCode());
+      let match = await QRService.match(
+        mongoose.Types.ObjectId(),
+        QRService.generateCode()
+      );
       expect(match).toBeFalsy();
     });
 
@@ -134,5 +157,5 @@ describe('QRService', () => {
     it('Empty', async () => {
       expect(await QRService.list()).toHaveLength(0);
     });
-  })
+  });
 });

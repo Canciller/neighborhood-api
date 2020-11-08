@@ -169,13 +169,13 @@ class QRService {
   }
 
   /**
-   * Match QR with code for user.
+   * Match QR with code for user and check if enabled.
    * @param {string} user - User ID.
    * @param {string} code - Passed code.
    */
   async match(user, code) {
     const found = await this.get(user);
-    return found !== null && found.code === code;
+    return found !== null && found.isCodeCorrect(code);
   }
 
   /**

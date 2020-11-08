@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-//const QRCode = require('qrcode');
 
 const QRSchema = new mongoose.Schema(
   {
@@ -28,6 +27,16 @@ const QRSchema = new mongoose.Schema(
   }
 );
 
+// TODO: Create test for isCodeCorrect.
+/**
+ * Compares stored code with passed code and checks if enabled.
+ * @param {string} code
+ * @returns {boolean}
+ */
+QRSchema.methods.isCodeCorrect = function (code) {
+  return this.code === code && this.enabled;
+};
+
 QRSchema.set('toJSON', {
   virtuals: true,
   versionKey: false,
@@ -35,21 +44,5 @@ QRSchema.set('toJSON', {
     delete ret._id;
   },
 });
-
-/*
-QRSchema.pre('save', async function() {
-  const document = this;
-
-    const url = "http://localhost:8000/api/qrs/user/" + document.user;
-    const base64Image = await QRCode.toDataURL(url, {
-      type: 'image/jpeg',
-      quality: 1,
-    });
-
-    document.code = base64Image;
-   
- 
-});
-*/
 
 module.exports = mongoose.model('QR', QRSchema);

@@ -28,10 +28,10 @@ module.exports = (app) => {
       };
 
       try {
-        const user = await UserService.list(query);
+        const users = await UserService.list(query);
 
-        if (user) res.json(user);
-        else throw UserNotFoundError;
+        if (users) res.json(users);
+        else throw createError(500, 'Ha ocurrio un error al traer usuarios.');
       } catch (err) {
         next(err);
       }

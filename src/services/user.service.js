@@ -7,7 +7,6 @@ const ObjectId = require('mongoose').Types.ObjectId;
  *  update
  *  verify
  *  delete
- *  exists
  */
 
 class UserService {
@@ -61,7 +60,7 @@ class UserService {
    */
   async get(username) {
     return await User.findOne({
-      $or: [{ username: username }, { email: username }],
+      $or: [{ username }, { email: username }],
     });
   }
 
@@ -150,21 +149,26 @@ class UserService {
    * @returns {boolean}
    */
   async exists(username) {
-    return await User.exists({ username });
+    return await User.exists({
+      $or: [{ username }, { email: username }],
+    });
   }
 
   /**
-   * Check if user with id exists.
+   * Check if user exists by id.
    * @param {string} id - User ID.
    * @returns {boolean}
    */
   async existsById(id) {
-    return await User.exists({ _id: id });
+    if (ObjectId.isValid(id)) return await User.exists({ _id: id });
+
+    return false;
   }
 
   /**
    * Check if user with email exists.
    * @param {string} email
+   * @returns {boolean}
    */
   async emailExists(email) {
     return await User.exists({ email });

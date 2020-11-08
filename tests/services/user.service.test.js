@@ -102,12 +102,21 @@ describe('User service', () => {
 
       const sameUsernameAndEmail = await UserService.updateById(updated.id, {
         username: created.username,
-        email: created.email
+        email: created.email,
       });
 
-      expect(sameUsernameAndEmail).toHaveProperty('id', sameUsernameAndEmail.id);
-      expect(sameUsernameAndEmail).toHaveProperty('username', sameUsernameAndEmail.username);
-      expect(sameUsernameAndEmail).toHaveProperty('email', sameUsernameAndEmail.email);
+      expect(sameUsernameAndEmail).toHaveProperty(
+        'id',
+        sameUsernameAndEmail.id
+      );
+      expect(sameUsernameAndEmail).toHaveProperty(
+        'username',
+        sameUsernameAndEmail.username
+      );
+      expect(sameUsernameAndEmail).toHaveProperty(
+        'email',
+        sameUsernameAndEmail.email
+      );
     });
 
     it('Error - Not unique', async () => {
@@ -132,6 +141,8 @@ describe('User service', () => {
       expect(updated).toHaveProperty('username', user.username);
     });
 
+    /*
+    // TODO: Find more about mongoose enum validator.
     it('Invalid role', async () => {
       const created = await UserService.create(user);
 
@@ -141,6 +152,7 @@ describe('User service', () => {
         })
       ).rejects.toBeInstanceOf(mongoose.Error.ValidationError);
     });
+    */
 
     it('User not found', async () => {
       const updated = await UserService.updateById(mongoose.Types.ObjectId());
@@ -251,9 +263,17 @@ describe('User service', () => {
     it('Success', async () => {
       // Get
       const created = await UserService.create(user);
-      const found = await UserService.getById(created.id);
 
+      let found = await UserService.getById(created.id);
       expect(found).toHaveProperty('id', created.id);
+
+      found = await UserService.get(created.username);
+      expect(found).toHaveProperty('id', created.id);
+      expect(found).toHaveProperty('username', created.username);
+
+      found = await UserService.get(created.email);
+      expect(found).toHaveProperty('id', created.id);
+      expect(found).toHaveProperty('email', created.email);
 
       // Exists
       const exists = await UserService.existsById(created.id);
@@ -302,6 +322,59 @@ describe('User service', () => {
     it('Invalid ID', async () => {
       const deleted = await UserService.deleteById(null);
       expect(deleted).toBeNull();
+    });
+  });
+
+  /**
+   * Exists
+   */
+  describe('Exists', () => {
+    it('Success', async () => {
+      // Exists
+      const created = await UserService.create(user);
+      let exists = await UserService.existsById(created.id);
+
+      expect(exists).toBeTruthy();
+
+      exists = await UserService.exists(created.username);
+      expect(exists).toBeTruthy();
+
+      exists = await UserService.emailExists(created.email);
+      expect(exists).toBeTruthy();
+
+      exists = await UserService.exists(created.email);
+      expect(exists).toBeTruthy();
+
+      // Does not exist
+      await UserService.deleteById(created.id);
+
+      exists = await UserService.existsById(exists.id);
+      expect(exists).toBeFalsy();
+
+      exists = await UserService.exists(created.username);
+      expect(exists).toBeFalsy();
+
+      exists = await UserService.emailExists(created.email);
+      expect(exists).toBeFalsy();
+
+      exists = await UserService.exists(created.email);
+      expect(exists).toBeFalsy();
+
+      exists = await UserService.exists(null);
+      expect(exists).toBeFalsy();
+    });
+
+    it('User not found', async () => {
+      const exists = await UserService.existsById(mongoose.Types.ObjectId());
+      expect(exists).toBeFalsy();
+    });
+
+    it('Invalid ID', async () => {
+      let exists = await UserService.existsById(null);
+      expect(exists).toBeFalsy();
+
+      exists = await UserService.existsById('invalid');
+      expect(exists).toBeFalsy();
     });
   });
 });

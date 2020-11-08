@@ -1,88 +1,197 @@
+const crypto = require('crypto');
 const QRCode = require('qrcode');
 const QR = require('../models/qr.model');
 const UserService = require('../services/user.service');
+const ObjectId = require('mongoose').Types.ObjectId;
+const config = require('../config');
+
+// TODO: Maybe user needs to be populated.
+// TODO: Create test for QRService.list.
 
 class QRService {
   /**
-   * Generate QR code for user with userId.
-   * @param {string} userId - User ID.
+   * Generate QR payload.
+   * @param {string} user - User ID.
+   * @param {string} code - Generated code.
+   * @returns {string}
    */
-  async generate(userId) {
-    const url = "http://localhost:8000/api/qrs/user/" + userId
-    const base64Image = await QRCode.toDataURL(url, {
-      type: 'image/jpeg',
-      quality: 1,
-    });
-
-    return base64Image;
-
-    /*
-    return await QR.create(new QR({
-      user: userId,
-    }))
-    */
+  generatePayload(user, code) {
+    return `${config.api.url}/${config.api.prefix}/qr/match/${user}/${code}`;
   }
 
-  async create(doc) {
-    if(await this.existsByUserId(doc.user)) {
-      return await this.regenerateQR(doc.user);
-    }
-    else return await QR.create(new QR(doc));
+  /**
+   * Generate unique code.
+   * @returns {string}
+   */
+  generateCode() {
+    return crypto.randomBytes(16).toString('hex');
   }
 
-  async getById(id) {
-    return await QR.findById(id).populate('user');
+  /**
+   * Generate QR image.
+   * @param {string} payload
+   */
+  async generateQRImageWithPayload(payload) {
+    return await QRCode.toDataURL(payload);
   }
 
-  async get(username) {
-    return await QR.findOne({
-      user: await UserService.get(username),
-    }).populate('user');
+  /**
+   * Generate QR image with user and code.
+   * @param {string} user - User ID.
+   * @param {string} code - Generated Code.
+   */
+  async generateQRImage(user, code) {
+    return await QRCode.toDataURL(this.generatePayload(user, code));
   }
 
-  async getByUserID(id){
-    return await QR.findOne({
-      user: await UserService.getById(id),
-    }).populate('user');
-  }
-
-  async existsByUserId(id) {
-    return await QR.exists({ user: id });
-  }
-
-  async getAllActiveQR() {
-    return await QR.find({
-      isActive: { $all: true },
-    }).populate('user');
-  }
-
-  async blockQR(id) {
-    return await QR.findByIdAndUpdate(
-      id,
-      { $set: { isActive: false } },
-      { new: true }
-    );
-  }
-
-  async unblockQR(id) {
-    return await QR.findByIdAndUpdate(
-      id,
-      { $set: { isActive: true } },
-      { new: true }
-    );
-  }
-
-
-  async regenerateQR(userID){
-    return await QR.findOneAndUpdate(
-      {user: userID}, 
-      {code : await this.generate(userID)},{
-        new: true
+  /**
+   * Check if user exists and if QR exists for that user.
+   * @param {string} user - User ID.
+   * @returns {boolean}
+   */
+  async exists(user) {
+    if (ObjectId.isValid(user))
+      return await QR.exists({
+        user: user,
       });
+
+    return false;
   }
 
-  async getAll() {
-    return await QR.find().populate('user');
+  /**
+   * Get QR for user.
+   * @param {string} user - User ID.
+   */
+  async get(user) {
+    if (ObjectId.isValid(user))
+      return await QR.findOne({
+        user: user,
+      });
+
+    return null;
+  }
+
+  /**
+   * List QR.
+   * @param {Object} query
+   * @param {number} query.skip - Number of QR to be skipped.
+   * @param {number} query.limit - Limit number of QR to be returned.
+   * @param {enabled} query.enabled
+   */
+  async list({ skip = 0, limit = 100, enabled } = {}) {
+    let query = {};
+
+    if (enabled !== undefined) query.enabled = enabled;
+
+    return await QR.find(query)
+      .sort({
+        createdAt: -1,
+      })
+      .skip(+skip)
+      .limit(+limit)
+      .exec();
+  }
+
+  /**
+   * Create QR with user.
+   * @param {string} user - User ID.
+   * @param {Object} doc
+   */
+  async create(user, doc = {}) {
+    delete doc.user;
+
+    const exists = await UserService.existsById(user);
+
+    if (exists && ObjectId.isValid(user) )
+      return await QR.create(
+        new QR({
+          user: user,
+          ...doc,
+        })
+      );
+
+    return null;
+  }
+
+  /**
+   * Update QR with user.
+   * @param {string} user - User ID.
+   * @param {object} doc
+   */
+  async update(user, doc = {}) {
+    delete doc.user;
+
+    if (ObjectId.isValid(user))
+      return await QR.findOneAndUpdate({ user: user }, { $set: doc }, { new: true });
+
+    return null;
+  }
+
+  /**
+   * Generate QR for user.
+   * When QR exists update with new code.
+   * When QR doesn't exist create with new code.
+   * @param {string} user - User ID.
+   */
+  async generate(user) {
+    let exists = await this.exists(user);
+
+    const code = this.generateCode();
+    const image = await this.generateQRImage(user, code);
+
+    let qr = null;
+    const doc = {
+      code,
+      image,
+    };
+
+    if (exists) qr = await this.update(user, doc);
+    else qr = await this.create(user, doc);
+
+    return qr;
+  }
+
+  /**
+   * Delete QR for user.
+   * @param {string} user - User ID.
+   */
+  async delete(user) {
+    if (ObjectId.isValid(user))
+      return await QR.findOneAndDelete({
+        user: user,
+      });
+
+    return null;
+  }
+
+  /**
+   * Match QR with code for user.
+   * @param {string} user - User ID.
+   * @param {string} code - Passed code.
+   */
+  async match(user, code) {
+    const found = await this.get(user);
+    return found !== null && found.code === code;
+  }
+
+  /**
+   * Enable QR for user.
+   * @param {string} user - User ID.
+   */
+  async enable(user) {
+    return await this.update(user, {
+      enabled: true
+    });
+  }
+
+  /**
+   * Disable QR for user.
+   * @param {string} user - User ID.
+   */
+  async disable(user) {
+    return await this.update(user, {
+      enabled: false
+    });
   }
 }
 

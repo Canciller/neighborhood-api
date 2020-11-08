@@ -16,7 +16,7 @@ class QRService {
    * @returns {string}
    */
   generatePayload(user, code) {
-    return `${config.api.url}/${config.api.prefix}/qr/match/${user}/${code}`;
+    return `${config.api.url}${config.api.prefix}/qr/match/${user}/${code}`;
   }
 
   /**
@@ -102,7 +102,7 @@ class QRService {
 
     const exists = await UserService.existsById(user);
 
-    if (exists && ObjectId.isValid(user) )
+    if (exists && ObjectId.isValid(user))
       return await QR.create(
         new QR({
           user: user,
@@ -122,7 +122,11 @@ class QRService {
     delete doc.user;
 
     if (ObjectId.isValid(user))
-      return await QR.findOneAndUpdate({ user: user }, { $set: doc }, { new: true });
+      return await QR.findOneAndUpdate(
+        { user: user },
+        { $set: doc },
+        { new: true }
+      );
 
     return null;
   }
@@ -180,7 +184,7 @@ class QRService {
    */
   async enable(user) {
     return await this.update(user, {
-      enabled: true
+      enabled: true,
     });
   }
 
@@ -190,7 +194,7 @@ class QRService {
    */
   async disable(user) {
     return await this.update(user, {
-      enabled: false
+      enabled: false,
     });
   }
 }

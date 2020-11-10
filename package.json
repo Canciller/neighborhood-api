@@ -8,8 +8,8 @@
     "test:api": "jest ./tests/api",
     "start": "node src/server.js",
     "watch": "nodemon --watch src --watch .env src/server.js",
-    "prettier:fix": "prettier --write .",
-    "prettier:lint": "prettier --check ."
+    "fix:prettier": "prettier --write .",
+    "lint:prettier": "prettier --check ."
   },
   "repository": {
     "type": "git",

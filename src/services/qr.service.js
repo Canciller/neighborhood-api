@@ -66,7 +66,7 @@ class QRService {
     if (ObjectId.isValid(user))
       return await QR.findOne({
         user: user,
-      });
+      }).populate('user');
 
     return null;
   }
@@ -84,6 +84,7 @@ class QRService {
     if (enabled !== undefined) query.enabled = enabled;
 
     return await QR.find(query)
+      .populate('user')
       .sort({
         createdAt: -1,
       })
@@ -100,15 +101,18 @@ class QRService {
   async create(user, doc = {}) {
     delete doc.user;
 
-    const exists = await UserService.existsById(user);
+    const exist = await UserService.existsById(user);
 
-    if (exists && ObjectId.isValid(user))
-      return await QR.create(
-        new QR({
-          user: user,
-          ...doc,
-        })
-      );
+    if (exist && ObjectId.isValid(user)) {
+      const qr = new QR({
+        ...doc,
+        user: user,
+      });
+
+      (await qr.save()).populate('user')
+
+      return qr;
+    }
 
     return null;
   }
@@ -126,7 +130,7 @@ class QRService {
         { user: user },
         { $set: doc },
         { new: true }
-      );
+      ).populate('user');
 
     return null;
   }
@@ -163,7 +167,7 @@ class QRService {
     if (ObjectId.isValid(user))
       return await QR.findOneAndDelete({
         user: user,
-      });
+      }).populate('user');
 
     return null;
   }

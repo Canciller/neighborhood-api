@@ -37,8 +37,8 @@ describe('QRService', () => {
       // Update
       let qrUpdated = await QRService.generate(userCreated.id);
       expect(qrUpdated).toHaveProperty(
-        'user',
-        mongoose.Types.ObjectId(userCreated.id)
+        'user.id',
+        userCreated.id
       );
       expect(qrUpdated).not.toHaveProperty('code', qrCreated.code);
       expect(qrUpdated).not.toHaveProperty('image', qrCreated.image);
@@ -52,8 +52,8 @@ describe('QRService', () => {
       // Enable
       let qr = await QRService.enable(userCreated.id);
       expect(qr).toHaveProperty(
-        'user',
-        mongoose.Types.ObjectId(userCreated.id)
+        'user.id',
+        userCreated.id
       );
       expect(qr).toHaveProperty('code', qrCreated.code);
       expect(qr).toHaveProperty('image', qrCreated.image);
@@ -61,8 +61,8 @@ describe('QRService', () => {
 
       qr = await QRService.disable(userCreated.id);
       expect(qr).toHaveProperty(
-        'user',
-        mongoose.Types.ObjectId(userCreated.id)
+        'user.id',
+        userCreated.id
       );
       expect(qr).toHaveProperty('code', qrCreated.code);
       expect(qr).toHaveProperty('image', qrCreated.image);
@@ -90,8 +90,8 @@ describe('QRService', () => {
       let qrFound = await QRService.get(userCreated.id);
 
       expect(qrFound).toHaveProperty(
-        'user',
-        mongoose.Types.ObjectId(userCreated.id)
+        'user.id',
+        userCreated.id
       );
       expect(qrFound).toHaveProperty('code');
       expect(qrFound).toHaveProperty('image');
@@ -119,7 +119,7 @@ describe('QRService', () => {
     });
   });
 
-  describe('match', () => {
+  describe('Match', () => {
     it('Success', async () => {
       const userCreated = await UserService.create(user);
       let qrCreated = await QRService.generate(userCreated.id);

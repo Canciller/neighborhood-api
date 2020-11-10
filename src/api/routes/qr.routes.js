@@ -48,6 +48,7 @@ module.exports = (app) => {
         next(err);
       }
     })
+
     /**
      * Generate QR (Update or create).
      */
@@ -61,6 +62,7 @@ module.exports = (app) => {
         next(err);
       }
     })
+
     /**
      * Delete QR.
      */

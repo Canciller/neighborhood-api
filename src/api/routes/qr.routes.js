@@ -19,13 +19,13 @@ module.exports = (app) => {
     const query = {
       skip: req.query.skip,
       limit: req.query.limit,
-      enabled: req.query.enabled
+      enabled: req.query.enabled,
     };
 
     try {
       const qr = await QRService.list(query);
 
-      if(qr) res.json(qr);
+      if (qr) res.json(qr);
       else throw createError(500, 'Ha ocurrio un error al traer los QR.');
     } catch (err) {
       next(err);
@@ -73,7 +73,7 @@ module.exports = (app) => {
       } catch (err) {
         next(err);
       }
-    })
+    });
 
   /**
    * Enable QR.
@@ -111,7 +111,11 @@ module.exports = (app) => {
       const qr = await QRService.get(req.params.user);
 
       if (qr && qr.isCodeCorrect(req.params.code)) res.json(qr);
-      else throw createError(401, 'Codigos de seguridad no coinciden o QR esta deshabilitado.');
+      else
+        throw createError(
+          401,
+          'Codigos de seguridad no coinciden o QR esta deshabilitado.'
+        );
     } catch (err) {
       next(err);
     }

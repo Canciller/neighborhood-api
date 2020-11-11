@@ -109,7 +109,7 @@ class QRService {
         user: user,
       });
 
-      (await qr.save()).populate('user')
+      (await qr.save()).populate('user');
 
       return qr;
     }

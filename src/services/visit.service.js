@@ -1,6 +1,9 @@
+const { Console } = require('winston/lib/winston/transports');
 const Visit = require('../models/visit.model');
 const ObjectId = require('mongoose').Types.ObjectId;
 const UserService = require('../services/user.service');
+
+// TODO: Create test for get and deleteAll.
 
 class VisitService {
   /**
@@ -22,7 +25,7 @@ class VisitService {
   }
 
   /**
-   * Get visits for user.
+   * Get all visits of user.
    * @param {string} user - User ID.
    * @param {Object} query
    * @param {number} query.skip - Number of visits to be skipped.
@@ -45,7 +48,7 @@ class VisitService {
   }
 
   /**
-   * Delete visit.
+   * Delete visit of user.
    * @param {string} user - User ID.
    * @param {string} id - Visit ID.
    */
@@ -55,6 +58,24 @@ class VisitService {
         _id: id,
         user: user,
       }).populate('user');
+
+    return null;
+  }
+
+  /**
+   * Delete all visits of user.
+   * @param {string} user - User ID.
+   */
+  async deleteAll(user) {
+    const found = await UserService.getById(user);
+
+    if (found) {
+      await Visit.deleteMany({
+        user: user,
+      });
+
+      return found;
+    }
 
     return null;
   }

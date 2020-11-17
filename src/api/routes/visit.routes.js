@@ -1,58 +1,48 @@
 const { Router } = require('express');
 const router = Router();
+const isAllow = require('../middlewares/isAllow');
 const VisitService = require('../../services/visit.service');
+const createError = require('http-errors');
+
+// TODO: Get user ID from req.auth.id
 
 module.exports = (app) => {
   app.use('/visits', router);
 
-  router.get('', async (req, res, next) => {
+  /**
+   * Get all visits of user.
+   */
+  router.get('/:user', isAllow('visit'), async (req, res, next) => {
     try {
-      const visit = await VisitService.getAllVisits();
-      if (!visit) throw createError(404, 'Visita no encontrada.');
-      else res.json(visit);
-    } catch (error) {
-      next(error);
+      return res.json(await VisitService.get(req.params.user, req.query));
+    } catch (err) {
+      next(err);
     }
   });
 
-  router.post('', async (req, res, next) => {
+  /**
+   * Delete visit of user.
+   */
+  router.delete('/:user/:id', isAllow('visit'), async (req, res, next) => {
     try {
-      const visit = await VisitService.create(req.body);
-      if (!visit)
-        throw createError(401, 'Ha ocurrido un problema al crear la visita.');
-      else res.json(visit);
-    } catch (error) {
-      next(error);
+      const visit = await VisitService.delete(req.params.user, req.params.id);
+      if (visit) return res.json(visit);
+      else throw new createError(404, 'Visita no encontrada.');
+    } catch (err) {
+      next(err);
     }
   });
 
-  router.get('/:username', async (req, res, next) => {
+  /**
+   * Delete all visits of user.
+   */
+  router.delete('/:user', isAllow('visit'), async (req, res, next) => {
     try {
-      const visit = await VisitService.get(req.params.username);
-      if (!visit) throw createError(404, 'Visita no encontrada.');
-      else res.json(visit);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-  router.get('/visit/:id', async (req, res, next) => {
-    try {
-      const visit = await VisitService.getById(req.params.id);
-      if (!visit) throw createError(404, 'Visita no encontrada.');
-      else res.json(visit);
-    } catch (error) {
-      next(error);
-    }
-  });
-
-  router.put('/:id', async (req, res, next) => {
-    try {
-      const visit = await VisitService.updateVisit(req.params.id);
-      if (!visit) throw createError(404, 'Visita no encontrada.');
-      else res.json(visit);
-    } catch (error) {
-      next(error);
+      const user = await VisitService.deleteAll(req.params.user);
+      if (user) return res.json(user);
+      else throw new createError(404, 'Usuario no encontrado.');
+    } catch (err) {
+      next(err);
     }
   });
 };

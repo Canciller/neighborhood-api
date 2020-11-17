@@ -1,8 +1,11 @@
 const { Router } = require('express');
 const router = Router();
 const QRService = require('../../services/qr.service');
+const VisitService = require('../../services/visit.service');
 const isAllow = require('../middlewares/isAllow');
 const createError = require('http-errors');
+
+// TODO: Get user ID from req.auth.id
 
 const QRNotFoundError = createError(404, 'QR no encontrado.');
 
@@ -112,8 +115,11 @@ module.exports = (app) => {
     try {
       const qr = await QRService.get(req.params.user);
 
-      if (qr && qr.isCodeCorrect(req.params.code)) res.json(qr);
-      else
+      // TODO: Create service method for this.
+      if (qr && qr.isCodeCorrect(req.params.code)) {
+        await VisitService.create(qr.user.id);
+        res.json(qr);
+      } else
         throw createError(
           401,
           'Codigos de seguridad no coinciden o QR esta deshabilitado.'

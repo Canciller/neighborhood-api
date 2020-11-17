@@ -5,6 +5,7 @@ const UserService = require('../services/user.service');
 const VisitService = require('../services/visit.service');
 const ObjectId = require('mongoose').Types.ObjectId;
 const config = require('../config');
+const { Console } = require('console');
 
 // TODO: Maybe user needs to be populated.
 // TODO: Create test for QRService.list.
@@ -180,7 +181,7 @@ class QRService {
     const found = await this.get(user);
 
     const isCodeCorrect = found !== null && found.isCodeCorrect(code);
-    if(isCodeCorrect) await VisitService.create(user);
+    if (isCodeCorrect) await VisitService.create(user);
 
     return isCodeCorrect;
   }

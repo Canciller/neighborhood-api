@@ -23,10 +23,7 @@ describe('QRService', () => {
       let qrCreated = await QRService.generate(userCreated.id);
 
       // Create
-      expect(qrCreated).toHaveProperty(
-        'user',
-        mongoose.Types.ObjectId(userCreated.id)
-      );
+      expect(qrCreated).toHaveProperty('user.id', userCreated.id);
       expect(qrCreated).toHaveProperty('code');
       expect(qrCreated).toHaveProperty('image');
       expect(qrCreated).toHaveProperty('enabled', false);

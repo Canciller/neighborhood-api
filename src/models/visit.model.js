@@ -8,16 +8,20 @@ const VisitSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
-    visits: {
-      type: Number,
-      required: false,
-    },
-    maxVisits: {
-      type: Number,
-      required: true,
+    createdAt: {
+      type: Date,
+      default: Date.now,
     },
   },
-  { timestamps: true, versionKey: false }
+  { versionKey: false }
 );
+
+VisitSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: function (doc, ret) {
+    delete ret._id;
+  },
+});
 
 module.exports = mongoose.model('Visit', VisitSchema);

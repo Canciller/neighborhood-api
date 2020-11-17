@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const QRCode = require('qrcode');
 const QR = require('../models/qr.model');
 const UserService = require('../services/user.service');
+const VisitService = require('../services/visit.service');
 const ObjectId = require('mongoose').Types.ObjectId;
 const config = require('../config');
 
@@ -104,14 +105,12 @@ class QRService {
     const exist = await UserService.existsById(user);
 
     if (exist && ObjectId.isValid(user)) {
-      const qr = new QR({
+      const qr = await QR.create({
         ...doc,
         user: user,
       });
 
-      (await qr.save()).populate('user');
-
-      return qr;
+      return await qr.populate('user').execPopulate();
     }
 
     return null;
@@ -179,7 +178,11 @@ class QRService {
    */
   async match(user, code) {
     const found = await this.get(user);
-    return found !== null && found.isCodeCorrect(code);
+
+    const isCodeCorrect = found !== null && found.isCodeCorrect(code);
+    if(isCodeCorrect) await VisitService.create(user);
+
+    return isCodeCorrect;
   }
 
   /**
